@@ -1,0 +1,4 @@
+interface:
+  display_name: "Learning Harness"
+  short_description: "Learn with anchored questions and your current AI tutor"
+  default_prompt: "Use $learning-harness to teach me a topic in an annotatable workspace, with you as the tutor and no separate model API."

@@ -1,0 +1,12 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Learning Harness</title><style>__STYLE__</style></head>
+<body><header><strong>Learning Harness</strong><span>由当前对话带你学习</span><button id="export">导出学习状态</button></header>
+<div id="capabilities" role="status"></div>
+<div class="layout"><aside><small>学习路径</small><div id="path"></div><button id="back">返回上一概念</button><hr><label for="prerequisite">补充前置概念</label><input id="prerequisite" placeholder="概念名称"><button id="push">进入分支</button><hr><small>理解证据</small><p id="mastery"></p><textarea id="evidence" placeholder="用自己的话解释当前概念" aria-label="我的理解"></textarea><button id="understood">保存我的复述</button></aside>
+<main><h1 id="goal"></h1><p class="muted">划选一句话，留下疑问。正文会保留，解释在页边持续积累。</p><div id="document" oai-annotation-container-text></div>
+<section id="selection" hidden><h3>这段内容，我想问</h3><blockquote id="quote"></blockquote><textarea id="question" aria-label="对选区的疑问" placeholder="哪里不理解？"></textarea><button id="save-question">保存批注</button><button id="cancel">取消</button></section>
+</main><aside class="margin"><h2>页边问题</h2><div id="annotations" oai-annotation-container></div></aside></div>
+<p id="status" role="status" aria-live="polite"></p>
+<dialog id="handoff"><h2>把问题交给当前对话</h2><p>此浏览器未能打开批注编辑器。复制下面的内容，粘贴到当前 Work 对话；这里尚未发送。</p><textarea id="handoff-text" readonly aria-label="待发送的问题上下文"></textarea><button id="copy">复制</button><button id="close-handoff">关闭</button></dialog>
+<details class="manual"><summary>手动接收当前对话的回答</summary><p>没有网页工具时，将当前对话返回的回答包粘贴到这里。写入前会检查会话和版本。</p><textarea id="reply-packet" aria-label="回答包 JSON"></textarea><button id="apply-reply">写入回答</button></details>
+<script type="application/json" id="lesson-state">__STATE__</script><script>__ENGINE__</script><script>__CLIENT__</script></body></html>

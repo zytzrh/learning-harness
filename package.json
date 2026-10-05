@@ -1,0 +1,10 @@
+{
+  "name": "learning-harness-browser-tests",
+  "private": true,
+  "scripts": {
+    "test": "node tests/test_work_state.cjs && node tests/test_work_bridge.mjs"
+  },
+  "devDependencies": {
+    "happy-dom": "20.14.5"
+  }
+}

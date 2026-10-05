@@ -18,3 +18,7 @@ jobs:
         with:
           node-version: '22'
       - run: node --check learning_harness/static/app.js
+      - run: node tests/test_work_state.cjs
+      - run: node --check skills/learning-harness/assets/client.js
+      - run: npm ci --ignore-scripts
+      - run: npm test

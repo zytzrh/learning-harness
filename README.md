@@ -1,4 +1,4 @@
-# Learning Harness · Margin
+# Learning Harness
 
 An open-source, local-first learning runtime with an annotatable document client.
 
@@ -6,10 +6,78 @@ An open-source, local-first learning runtime with an annotatable document client
 that caused it, preserve a return path when exploring prerequisites, and carry
 learning state between sessions and model adapters.
 
-This is a working **v0.1 MVP**, not a validated adaptive tutor. The browser client
-is called **Margin**; the independent Python library is `learning_harness`.
+This repository includes a **v0.2 agent-taught workspace** and the original
+**v0.1 local app / Python SDK**. Neither is a validated adaptive tutor.
 
-## Start in one command
+
+## Let the current agent teach you — new in v0.2
+
+Give this repository to ChatGPT Work or another capable agent and ask it to read
+[`skills/learning-harness/SKILL.md`](skills/learning-harness/SKILL.md). The **agent
+in your current conversation** writes the lesson and explanations; the generated
+workspace does not call an LLM API or require a second model subscription/key.
+
+Example request:
+
+> Read the learning-harness skill in this repository. Use it to teach me looped
+> transformers through a short, annotatable learning document. You are the tutor;
+> do not ask me to configure a model API. Check which browser bridge is available.
+
+The skill bundles a standalone page renderer, state transitions, and a browser
+bridge. It can generate a subject-specific workspace from a small JSON lesson:
+
+```bash
+python3 skills/learning-harness/scripts/build_workspace.py \
+  --input examples/work-lesson.json --output /tmp/learning-workspace/index.html \
+  --state-output /tmp/learning-workspace/state.json
+python3 -m http.server 8765 --bind 127.0.0.1 --directory /tmp/learning-workspace
+```
+
+These commands are optional developer setup; a capable agent handles generation
+and chooses an accessible local or hosted surface for the learner. A cloud task's
+localhost is not automatically reachable from your computer.
+
+### What is connected, exactly?
+
+1. Select a passage and save a question in the page.
+2. Press **交给当前 Work 回答**. In a supported built-in browser, the page opens
+   a browser annotation with the question and session IDs. **You still send that
+   annotation in the conversation.** An accepted request is not proof of sending.
+3. The current agent reads the live learning state and writes its own explanation
+   back using the page's WebMCP tools. No inference request originates from the page.
+4. The agent saves the returned JSON as a durable checkpoint using its host's file
+   tools. Browser localStorage alone is not cross-device persistence.
+
+| Environment | Question handoff / write-back |
+|---|---|
+| Supported ChatGPT built-in browser with annotations + site tools | Browser annotation into the conversation; agent writes back through WebMCP |
+| Only browser annotations available | Annotation into the conversation; manual answer packet if no writable page tools |
+| Regular browser, iframe preview, or unsupported host | Copy the question packet to the conversation, then paste the answer packet back |
+
+This is not a universal automatic bridge for every ChatGPT web session. The page
+feature-detects the official APIs and shows the mode actually available. If a
+skill is installed, invoke it by name; providing a GitHub URL alone does not
+install it or grant browser capabilities. The UI preserves manual operation when
+the host APIs are absent or a request is rejected.
+
+The v0.2 workspace uses a separate versioned JSON schema. It supports stable
+anchors, explicit resolution, learner evidence, prerequisite return paths,
+append-only teaching content, duplicate-write protection, and stale-write
+rejection. Existing v0.1 SQLite sessions are **not automatically migrated**.
+
+Implementation follows the official [Annotations Extensibility](https://learn.chatgpt.com/docs/annotations-extensibility)
+and [Site tools](https://learn.chatgpt.com/docs/webmcp) documentation. State/renderer
+tests and DOM bridge contract tests are included; real built-in-browser delivery
+still requires end-to-end acceptance on a supported client. Do not confuse a
+mocked `accepted` response with a real message being sent.
+
+## Legacy standalone app / Python SDK (v0.1)
+
+The instructions below run the original local app, which uses scripted demo
+responses or a separately configured model API. They are not the new agent-taught
+workflow above.
+
+## Start the legacy app
 
 Python 3.10+ is required. From the extracted or cloned repository:
 
@@ -143,6 +211,9 @@ multi-user service; it has no account system or production deployment layer.
 ```bash
 python3 -m unittest discover -s tests -v
 node --check learning_harness/static/app.js  # optional; needs Node
+node tests/test_work_state.cjs               # v0.2 state contract
+npm ci --ignore-scripts                     # optional DOM test dependencies
+npm test                                   # state + mocked host bridge tests
 ```
 
 Tests cover anchored Unicode spans, persistence, invalid model output rollback,
@@ -164,7 +235,7 @@ avoid promoting learner mastery from generated explanations alone.
 
 ---
 
-## 中文快速使用
+## 中文：旧版独立应用快速使用
 
 1. 下载解压，在终端进入 `learning-harness` 文件夹。
 2. 运行 `python3 -m learning_harness.server serve --demo`。
